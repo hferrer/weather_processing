@@ -21,10 +21,10 @@ col_check_na <- function(data.table.name,data_columns){
   #print(column)
   #print(length(column))
   
-  na_list = matrix(0L, length(column), 2)
+  na_list = matrix(0L, length(data_columns), 2)
   col2chk <- as.vector(paste0(rep("weather.clean.initial[,",length(data_columns)),data_columns,"]",sep=""))
   
-  for (i in 1:length(column)){
+  for (i in 1:length(data_columns)){
     
     #print(column[i])
     #print(paste0(eval(data.table.name)))
@@ -82,7 +82,24 @@ weather.clean.initial[, RH := 100 * (exp((17.625 * DEWP_CELC)/ (243.04 + DEWP_CE
 
 #Add Precipitation Data
 weather.clean.initial[, ":=" (PRECIP.PERIOD.HOURS = as.double(str_extract(weather.prelim.hourly[,AA1],"^.{2}")),
-                              PRECIP.DEPTH = as.double(substr(weather.prelim.hourly[,AA1],4,7))/10)]
+                              PRECIP.DEPTH = as.double(substr(weather.prelim.hourly[,AA1],4,7))/10,
+                              PRECIP.CONDITION = as.double(substr(weather.prelim.hourly[,AA1],9,9)),
+                              PRECIP.QUALITY = as.double(substr(weather.prelim.hourly[,AA1],11,11)),
+                              SKY.COVER = as.double(str_extract(weather.prelim.hourly[,GA1],"^.{2}")),
+                              SKY.COVER.QUALITY = as.double(substr(weather.prelim.hourly[,GA1],4,4)),
+                              SKY.COVER.HEIGHT = as.double(substr(weather.prelim.hourly[,GA1],6,11)),
+                              SKY.COVER.HEIGHT.QUALITY = as.double(substr(weather.prelim.hourly[,GA1],13,13)),
+                              SKY.COVER.CLOUD.TYPE = as.double(substr(weather.prelim.hourly[,GA1],15,16)),
+                              SKY.COVER.CLOUD.TYPE.QUALITY = as.double(substr(weather.prelim.hourly[,GA1],18,18)),
+                              ATMOS.PRESS.ALTIMETER = as.double(str_extract(weather.prelim.hourly[,MA1],"^.{5}")),
+                              ATMOS.PRESS.ALTIMETER.QUALITY = as.double(substr(weather.prelim.hourly[,MA1],7,7)),
+                              ATMOS.PRESS.STATION = as.double(substr(weather.prelim.hourly[,MA1],9,13)),
+                              ATMOS.PRESS.STATION.QUALITY = as.double(substr(weather.prelim.hourly[,MA1],15,15)),
+                              WIND.DIRECTION = as.double(str_extract(weather.prelim.hourly[,WND],"^.{3}")),
+                              WIND.DIRECTION.QUALITY = as.double(substr(weather.prelim.hourly[,WND],5,5)),
+                              WIND.TYPE = substr(weather.prelim.hourly[,WND],7,7),
+                              WIND.SPEED = as.double(substr(weather.prelim.hourly[,WND],9,12)),
+                              WIND.SPEED.QUALITY = as.double(substr(weather.prelim.hourly[,WND],14,14)))]
 
 #CHECK data columns for missing data.  You have to specify which columns to check
 data_columns <- c("TEMP_CELC","DEWP_CELC","RH","PRECIP.PERIOD.HOURS","PRECIP.DEPTH")
@@ -97,3 +114,8 @@ for (i in 1: nrow(columns.2b.adj)){
 
 any(is.na(weather.clean.initial[,PRECIP.DEPTH]))
 any(is.na(weather.clean.initial[,PRECIP.PERIOD.HOURS]))
+
+weather.clean.initial[, c("LIQ.PRECIP.PRD","LIQ.PRECIP.DEPTH","LIQ.PRECIP.CONDITION","LIQ.PRECIP.QUALITY") :=
+                        str_split(weather.prelim.hourly[,AA1],",")]
+
+
