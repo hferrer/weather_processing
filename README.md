@@ -33,3 +33,6 @@ This script is in the early stages of development.  The following key improvemen
   * No missing hours within the date-time period. 
   * When data for an hour is missing, fill-in the missing data
 * Remove/clean outliers
+
+## License
+The script is shared under the GNU GPLv3 license.
