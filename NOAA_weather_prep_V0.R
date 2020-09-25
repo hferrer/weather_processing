@@ -101,7 +101,7 @@ weather.clean.initial[, ":=" (PRECIP.PERIOD.HOURS = as.double(str_extract(weathe
                               WIND.SPEED = as.double(substr(weather.prelim.hourly[,WND],9,12)),
                               WIND.SPEED.QUALITY = as.double(substr(weather.prelim.hourly[,WND],14,14)))]
 
-#CHECK data columns for missing data.  You have to specify which columns to check
+#CHECK data columns for missing data and fill forward.  You have to specify which columns to check
 data_columns <- c("TEMP_CELC","DEWP_CELC","RH","PRECIP.PERIOD.HOURS","PRECIP.DEPTH")
 
 columns.2b.adj <- col_check_na("weather.clean.initial",data_columns)
@@ -111,11 +111,3 @@ for (i in 1: nrow(columns.2b.adj)){
   weather.clean.initial[ , eval(data_columns[i]) := na.locf(get(data_columns[i]))]
   
 }
-
-any(is.na(weather.clean.initial[,PRECIP.DEPTH]))
-any(is.na(weather.clean.initial[,PRECIP.PERIOD.HOURS]))
-
-weather.clean.initial[, c("LIQ.PRECIP.PRD","LIQ.PRECIP.DEPTH","LIQ.PRECIP.CONDITION","LIQ.PRECIP.QUALITY") :=
-                        str_split(weather.prelim.hourly[,AA1],",")]
-
-
